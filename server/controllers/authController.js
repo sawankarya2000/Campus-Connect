@@ -72,10 +72,13 @@ exports.signup = async (req, res, next) => {
       joiningYear,
     });
 
-    await new Email(newUser).sendWelcome();
+    console.log(newUser);
+
+    // await new Email(newUser).sendWelcome();
 
     createSendToken(newUser, 201, req, res);
   } catch (err) {
+    console.log(err.message);
     res.status(400).json({
       status: 'fail',
       message: err.message,
@@ -97,7 +100,10 @@ exports.login = async (req, res, next) => {
     }
 
     // Check if user exists and password is correct
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select(
+      '+password -createdAt -joiningYear -posts'
+    );
+
     if (!user || !(await user.correctPassword(password, user.password))) {
       return res.status(401).json({
         status: 'fail',

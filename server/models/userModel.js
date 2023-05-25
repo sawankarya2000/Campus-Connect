@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     validate: [validator.isEmail, 'Please provide a valid email'],
   },
   dateOfBirth: {
-    type: Date,
+    type: String,
     required: [true, 'Please enter your date of birth'],
   },
   password: {
@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['student', 'faculty', 'hod', 'director', 'alumni'],
+    enum: ['student', 'faculty', 'hod', 'director', 'alumini'],
     default: 'student',
   },
   collegeId: {
@@ -71,6 +71,12 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please provide your joining year'],
     validate: {
       validator: function (value) {
+        // if (this.role !== 'student') {
+        //   return validator.isInt(String(value), {
+        //     min: 2000,
+        //     max: new Date().getFullYear(),
+        //   });
+        // }
         return validator.isInt(String(value), {
           min: 2018,
           max: new Date().getFullYear(),
@@ -91,10 +97,6 @@ const userSchema = new mongoose.Schema({
       },
       message:
         'Passing year cannot be before joining year or after the current year',
-    },
-
-    required: function () {
-      return this.role === 'student';
     },
     message: 'Please provide your passing year',
   },
