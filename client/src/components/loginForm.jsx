@@ -31,13 +31,6 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      //   const response = await fetch("http://127.0.0.1:3000/api/v1/users/login", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({ email, password }),
-      //   });
       const response = await axios({
         method: "post",
         url: "http://127.0.0.1:3000/api/v1/users/login",
@@ -53,7 +46,7 @@ const LoginForm = () => {
           id: responseData._id,
           email: responseData.email,
           name: responseData.firstName + responseData.lastName,
-          photo: `http://127.0.0.1:3000/api/v1/files/${responseData.photo}`,
+          photo: responseData.photo,
           collegeId: responseData.collegeId,
           course: responseData.course,
           dateOfBirth: responseData.dateOfBirth,
@@ -63,8 +56,8 @@ const LoginForm = () => {
 
         dispatch(setAuthorized(true));
         dispatch(setData(userData));
-        navigate("/");
         setError("");
+        navigate("/");
       } else {
         const errorData = await response;
         setError(errorData.message || "Could Not Login Successfully");

@@ -14,6 +14,7 @@ router.patch('/resetPassword/:token', authController.resetPassword);
 
 router.patch('/updateMyPassword', () => {});
 
+router.get('/', authController.protect, userController.getUser);
 router.get('/me', authController.protect, userController.getUser);
 router.patch(
   '/updateMe',
@@ -29,7 +30,7 @@ router.get(
   authController.protect,
   assignmentController.getPendingAssignmentForUser
 );
-router.get('/:id', userController.getUser);
+router.get('/:id', authController.protect, userController.getUser);
 
 router.all('*', (req, res, next) => {
   res.status(404).json({

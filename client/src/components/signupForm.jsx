@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { setAuthorized, setData } from "../features/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Validator from "validatorjs";
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({
@@ -27,11 +28,23 @@ const SignupForm = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const validationSuccess = (e) => {
+    if (!Validator.isEmail(formData.email)) return false;
+    if (formData.password.length < 8) return false;
+    if (formData.password !== formData.confirmPassword) return false;
+    if (formData.firstName === "") return false;
+    if (formData.lastName === "") return false;
+    if (formData.role === "") return false;
+    if (formData.collegeId === "") return false;
+    if (formData.joiningYear === "") return false;
+    if (formData.course === "") return false;
+    if (formData.department === "") return false;
+    return true;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (formData.password === formData.confirmPassword) {
+      if (validationSuccess) {
         const response = await axios.post(
           "http://127.0.0.1:3000/api/v1/users/signup",
           formData
@@ -44,7 +57,7 @@ const SignupForm = () => {
             id: responseData._id,
             email: responseData.email,
             name: responseData.firstName + responseData.lastName,
-            photo: `http://127.0.0.1:3000/api/v1/files/${responseData.photo}`,
+            photo: responseData.photo,
             collegeId: responseData.collegeId,
             course: responseData.course,
             dateOfBirth: responseData.dateOfBirth,
@@ -80,7 +93,7 @@ const SignupForm = () => {
           setError(errorData.message || "Could Not Login Successfully");
         }
       } else {
-        setError("Password Do Not match");
+        setError("Rquired Fields incorrect or missing");
       }
     } catch (error) {
       setError("An error occurred while signing up.");
@@ -90,16 +103,16 @@ const SignupForm = () => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-full">
-        <h2 className="text-3xl font-medium mb-3 sm:mb-6">Sign Up</h2>
+        <h2 className="text-3xl font-medium mb-3 md:mb-6">Sign Up</h2>
         {success && (
           <div className="mb-4 text-green-500 text-lg animate-bounce">
             Account Created Successfully
           </div>
         )}
         <form onSubmit={handleSubmit}>
-          <div className="mb-3 sm:mb-6">
+          <div className="mb-3 md:mb-6">
             <div className="flex mb-2">
-              <div className="mr-2 w-full sm:w-1/2">
+              <div className="mr-2 w-full md:w-1/2">
                 <label htmlFor="firstName" className="block mb-2 text-lg">
                   First Name
                 </label>
@@ -113,7 +126,7 @@ const SignupForm = () => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="ml-2 w-full sm:w-1/2">
+              <div className="ml-2 w-full md:w-1/2">
                 <label htmlFor="lastName" className="block mb-2 text-lg">
                   Last Name
                 </label>
@@ -141,8 +154,8 @@ const SignupForm = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="flex flex-col sm:flex-row sm:justify-between">
-            <div className="mb-3 sm:mb-6">
+          <div className="flex flex-col md:flex-row md:justify-between">
+            <div className="mb-3 md:mb-6">
               <label htmlFor="password" className="block mb-2 text-lg">
                 Password
               </label>
@@ -156,7 +169,7 @@ const SignupForm = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="mb-3 sm:mb-6">
+            <div className="mb-3 md:mb-6">
               <label htmlFor="confirmPassword" className="block mb-2 text-lg">
                 Confirm Password
               </label>
@@ -171,7 +184,7 @@ const SignupForm = () => {
               />
             </div>
           </div>
-          <div className="flex mb-3 sm:mb-6 sm:justify-between">
+          <div className="flex mb-3 md:mb-6 md:justify-between">
             <div className="mr-2 w-1/3">
               <label htmlFor="role" className="block mb-2 text-lg">
                 Role
@@ -220,7 +233,7 @@ const SignupForm = () => {
               />
             </div>
           </div>
-          <div className="flex mb-3 sm:mb-6 sm:justify-between">
+          <div className="flex mb-3 md:mb-6 md:justify-between">
             <div className="mr-2 w-1/3">
               <label htmlFor="dateOfBirth" className="block mb-2 text-lg">
                 Date of Birth

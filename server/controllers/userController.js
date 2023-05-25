@@ -5,7 +5,20 @@ const User = require('../models/userModel');
 // Get user details
 exports.getUser = async (req, res, next) => {
   try {
-    const user = req.user || (await User.findById(req.params.id));
+    let user;
+    if (req.query.name) {
+      user = await User.findMany({ firstName: req.query.name });
+    } else if (req.params.id) {
+      user = await User.findById(req.params.id);
+    } else {
+      user = req.user;
+    }
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'User not found',
+      });
+    }
     res.status(200).json({
       status: 'success',
       data: {
