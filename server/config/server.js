@@ -10,11 +10,16 @@ const fileRouter = require('../routes/fileRoutes');
 const app = express();
 
 // Middleware
+app.use(cookieParser());
 //Express body parser
 app.use(express.json());
-app.use(cookieParser());
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'http://192.168.1.8:5173'],
+    credentials: true,
+  })
+);
 
 // Routes
 app.use('/api/v1/users/', userRouter);

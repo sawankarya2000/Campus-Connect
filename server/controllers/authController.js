@@ -22,13 +22,10 @@ const createSendToken = (user, statusCode, req, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-
-    secure: req.secure || req.header('x-forwarded-proto') === 'https',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
   };
 
-  // if (process.env.NODE_ENV === 'production') {
-  //   cookieOptions.secure = true;
-  // }
   res.cookie('jwt', token, cookieOptions);
 
   // Remove password from output
@@ -149,6 +146,7 @@ exports.protect = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       status: 'fail',
+      message: 'No Login Token Found',
     });
   }
 
@@ -163,7 +161,6 @@ exports.protect = async (req, res, next) => {
       message: 'User no longer exists',
     });
   }
-
   req.user = currentUser;
   next();
 };

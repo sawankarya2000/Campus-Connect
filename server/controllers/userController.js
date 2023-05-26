@@ -6,13 +6,15 @@ const User = require('../models/userModel');
 exports.getUser = async (req, res, next) => {
   try {
     let user;
+
     if (req.query.name) {
-      user = await User.findMany({ firstName: req.query.name });
+      user = await User.find();
     } else if (req.params.id) {
       user = await User.findById(req.params.id);
     } else {
       user = req.user;
     }
+
     if (!user) {
       return res.status(404).json({
         status: 'fail',

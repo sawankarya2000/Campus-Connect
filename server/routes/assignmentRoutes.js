@@ -18,7 +18,7 @@ router.get(
   assignmentController.checkFacultyValid,
   assignmentController.getUsersWithoutSubmission
 );
-
+router.get('/', authController.protect, assignmentController.getAllAssignments);
 router.get('/:id', authController.protect, assignmentController.getAssignment);
 
 router.post(

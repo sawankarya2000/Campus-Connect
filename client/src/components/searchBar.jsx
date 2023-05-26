@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import api from "../features/api";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -7,15 +9,17 @@ const SearchBar = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleSearch = (e) => {
+  const navigate = useNavigate();
+
+  const handleSearch = async (e) => {
     e.preventDefault();
     // Perform search operation with the searchQuery value
-    console.log("Search query:", searchQuery);
+    navigate(`/search/${searchQuery}`);
     setSearchQuery("");
   };
 
   return (
-    <form onSubmit={handleSearch} className="flex items-center">
+    <form onSubmit={handleSearch} className="hidden md:flex items-center">
       <input
         type="text"
         placeholder="Search..."

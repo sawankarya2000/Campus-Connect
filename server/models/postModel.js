@@ -14,6 +14,7 @@ const postSchema = new mongoose.Schema(
     },
     media: {
       type: String,
+      default: '',
     },
     comments: [
       {

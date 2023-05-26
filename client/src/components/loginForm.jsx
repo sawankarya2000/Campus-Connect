@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAuthorized, setData } from "../features/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from "../features/api";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -31,16 +32,25 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios({
-        method: "post",
-        url: "http://127.0.0.1:3000/api/v1/users/login",
-        data: {
-          email,
-          password,
-        },
-      });
+      // const response = await axios.post(
+      //   "http://127.0.0.1:3000/api/v1/users/login",
+      //   {
+      //     email,
+      //     password,
+      //   },
+      //   { withCredentials: true }
+      // );
 
+      const response = await api.post(
+        "/users/login",
+        { email, password },
+        { withCredentials: true }
+      );
+      console.log(response.data);
       if (response.statusText === "OK") {
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+
         const responseData = await response.data.data.user;
         const userData = {
           id: responseData._id,
@@ -65,6 +75,10 @@ const LoginForm = () => {
     } catch (error) {
       setError("An error occurred");
     }
+  };
+
+  const handleCreateAccount = () => {
+    navigate("/signup");
   };
 
   return (
@@ -115,7 +129,7 @@ const LoginForm = () => {
             </a>
           </div>
         </form>
-        <p className="text-center text-lg">
+        <p className="text-center text-lg" onClick={handleCreateAccount}>
           Don't have an account?{" "}
           <a href="#" className="text-blue-500 hover:text-blue-600">
             Create your account

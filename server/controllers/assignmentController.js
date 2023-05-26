@@ -44,6 +44,7 @@ exports.createAssignment = async (req, res) => {
       faculty: req.user._id, // Assuming faculty user is authenticated and stored in req.user
     });
 
+    // console.log(assignment);
     //Find all students enrolled in the course and batch
     const students = await User.find({
       role: 'student',
@@ -51,7 +52,6 @@ exports.createAssignment = async (req, res) => {
       course: req.body.course,
     });
 
-    console.log(students);
     //Traverse over this array
     students.forEach(async (student) => {
       const userId = student._id;
@@ -94,6 +94,34 @@ exports.getAssignment = async (req, res) => {
     res.sendFile(
       path.resolve(`./public/uploads/assignments/${assignment.file}`)
     );
+  } catch (err) {
+    return res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while retrieving the assignment.',
+    });
+  }
+};
+exports.getAllAssignments = async (req, res) => {
+  try {
+    //Retrieve assignment from database
+    const assignment = await Assignment.find().populate(
+      'faculty',
+      'firstName lastName'
+    );
+
+    if (!assignment) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Assignment not found.',
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        assignment,
+      },
+    });
   } catch (err) {
     return res.status(500).json({
       status: 'error',

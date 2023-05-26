@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require('../controllers/userController');
+const postController = require('../controllers/postController');
 const authController = require('../controllers/authController');
 const assignmentController = require('../controllers/assignmentController');
 
@@ -29,6 +30,11 @@ router.get(
   '/pending-assignment',
   authController.protect,
   assignmentController.getPendingAssignmentForUser
+);
+router.get(
+  '/getPost/:id',
+  authController.protect,
+  postController.getPostByUser
 );
 router.get('/:id', authController.protect, userController.getUser);
 

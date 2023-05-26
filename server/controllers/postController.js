@@ -93,6 +93,8 @@ exports.getPost = async (req, res) => {
     const post = await Post.findById(req.params.id)
       .populate('author')
       .populate('comments');
+
+    console.log(post);
     if (!post) {
       return res.status(404).json({
         status: 'fail',
@@ -110,6 +112,32 @@ exports.getPost = async (req, res) => {
     return res.status(500).json({
       status: 'error',
       message: 'Internal server error',
+    });
+  }
+};
+exports.getPostByUser = async (req, res) => {
+  try {
+    const post = await Post.find({ author: req.params.id })
+      .populate('author')
+      .populate('comments');
+
+    if (!post) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Post not found',
+      });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        post,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 'error',
+      message: error.message,
     });
   }
 };
@@ -181,6 +209,27 @@ exports.comment = async (req, res) => {
       status: 'error',
       // message: 'Internal server error',
       message: error.message,
+    });
+  }
+};
+
+exports.getAllPosts = async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate('author', 'firstName lastName photo')
+      .populate('comments')
+      .sort({ createdAt: -1 });
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        posts,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
     });
   }
 };
